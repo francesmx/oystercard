@@ -23,7 +23,7 @@ class JourneyLog
   private
 
   def current_journey(station)
-    if !@history.empty? && @history.last.finish.nil?
+    if !@history.empty? && (@history.last.finish.nil? || @history.last.start.nil?)
       @journey
     elsif @f && (@history.empty? || @journey.complete?)
       @journey = Journey.new(nil, station)

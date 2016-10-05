@@ -14,15 +14,16 @@ class JourneyLog
   end
 
   def finish(station)
+    @history.last.finish = station
   end
 
   private
 
   def current_journey(station)
-    if !@history.empty? && !@history.last.finish.nil?
+    if !@history.empty? && @history.last.finish.nil?
       @journey
     else
-        @journey = Journey.new(station)
+      @journey = Journey.new(station)
     end
   end
 

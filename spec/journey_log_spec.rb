@@ -17,6 +17,11 @@ describe JourneyLog do
       subject.start("A")
       expect(subject.history.last.start).to eq "A"
     end
+    it 'creates a new journey if you touch in twice' do
+      subject.start("A")
+      subject.start("B")
+      expect(subject.history.last.start).to eq "B"
+    end
   end
 
   describe '#finish' do
@@ -26,18 +31,21 @@ describe JourneyLog do
       subject.start("A")
       subject.finish("B")
       expect(subject.history.count).to eq 1
-    end 
-
+    end
     it 'completes a journey with a given destination' do
       subject.start("A")
       subject.finish("B")
       expect(subject.history.last.finish).to eq "B"
-    end    
-    
+    end
     it 'completes a journey with a given destination and retains origin' do
       subject.start("A")
       subject.finish("B")
       expect(subject.history.last.start).to eq "A"
+    end
+    it 'creates a new journey if you touch out twice' do
+      subject.finish("A")
+      subject.finish("B")
+      expect(subject.history.last.finish).to eq "B"
     end
   end
 end

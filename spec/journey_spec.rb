@@ -35,15 +35,15 @@ describe Journey do
     it 'charges minimum fare for a complete journey' do
       subject.start = 'Station X'
       subject.finish = 'Station Y'
-      expect(subject.fare).to eq 1
+      expect(subject.fare).to eq described_class::MINIMUM_FARE
     end
     it 'charges penalty fare when not touched out' do
       subject.start = 'Station X'
-      expect(subject.fare).to eq 6
+      expect(subject.fare).to eq described_class::PENALTY_FARE
     end
     it 'charges penalty fare when not touched in' do
       subject.finish = 'Station Y'
-      expect(subject.fare).to eq 6
+      expect(subject.fare).to eq described_class::PENALTY_FARE
     end
   end
 end

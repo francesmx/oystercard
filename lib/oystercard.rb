@@ -54,8 +54,8 @@ class Oystercard
 
   def touch_out_check(exit_station)
     if !in_journey?
-      @journey = Journey.new(nil,exit_station)
-      deduct
+      @journey = Journey.new(nil, exit_station)
+      @journeys << @journey
     end
   end
 end

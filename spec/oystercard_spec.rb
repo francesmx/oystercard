@@ -5,7 +5,8 @@ describe Oystercard do
 
   let(:entry_station) {double(:station)}
   let(:exit_station) {double(:station)}
-  let(:journey) { {start: entry_station, finish: exit_station} }
+
+  journey = Journey.new("A", "B")
 
   context 'With max balance on card' do
     before do
@@ -63,27 +64,33 @@ describe Oystercard do
       subject.touch_out(exit_station)
     end
 
-    it 'deducts the correct amount from card' do
-      expect{ subject.touch_out(exit_station) }.to change{ subject.balance }.by (-Journey::MINIMUM_FARE)
+    it 'deducts the penalty fare due to touching out twice' do
+      expect{ subject.touch_out(exit_station) }.to change{ subject.balance }.by (-Journey::PENALTY_FARE)
     end
 
     it 'changes in_journey to false' do
       expect(subject).not_to be_in_journey
     end
 
-    it 'allows you to touch in twice, and creates a new journey for the second touch in' do
-      subject.touch_out(double(:station))
-      expect(subject.journey_history[-1].start).to eq nil
+    it 'allows you to touch out twice, and creates a new journey for the second touch out' do
+      subject.touch_out(exit_station)
+      expect(subject.journey_history.last.start).to eq nil
     end
 
   end
 
   describe '#journey_history' do
-    it 'returns entry and exit station' do
+    it 'records the entry station correctly' do
       subject.top_up(described_class::MAXIMUM_BALANCE)
-      subject.touch_in(entry_station)
-      subject.touch_out(exit_station)
-      expect(subject.journey_history).to include journey
+      subject.touch_in("A")
+      subject.touch_out("B")
+      expect(subject.journey_history.last.start).to eq "A"
+    end
+    it 'records the exit station correctly' do
+      subject.top_up(described_class::MAXIMUM_BALANCE)
+      subject.touch_in("A")
+      subject.touch_out("B")
+      expect(subject.journey_history.last.finish).to eq "B"
     end
   end
 

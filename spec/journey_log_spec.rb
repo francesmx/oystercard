@@ -1,0 +1,1 @@
+require 'journey_log'

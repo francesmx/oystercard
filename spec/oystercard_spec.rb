@@ -1,10 +1,11 @@
 require 'oystercard'
+require 'journey'
 
 describe Oystercard do
 
   let(:entry_station) {double(:station)}
   let(:exit_station) {double(:station)}
-  let(:journey) { {entry_station: entry_station, exit_station: exit_station} }
+  let(:journey) { {start: entry_station, finish: exit_station} }
 
   context 'With max balance on card' do
     before do
@@ -49,7 +50,7 @@ describe Oystercard do
       subject.top_up(described_class::MAXIMUM_BALANCE)
       subject.touch_in(entry_station)
       subject.touch_in(double(:station))
-      expect(subject.journey_history[-2][:exit_station]).to eq nil
+      expect(subject.journey_history[-2].finish).to eq nil
     end
 
   end
@@ -63,7 +64,7 @@ describe Oystercard do
     end
 
     it 'deducts the correct amount from card' do
-      expect{ subject.touch_out(exit_station) }.to change{ subject.balance }.by (-described_class::MINIMUM_FARE)
+      expect{ subject.touch_out(exit_station) }.to change{ subject.balance }.by (-Journey::MINIMUM_FARE)
     end
 
     it 'changes in_journey to false' do
@@ -72,7 +73,7 @@ describe Oystercard do
 
     it 'allows you to touch in twice, and creates a new journey for the second touch in' do
       subject.touch_out(double(:station))
-      expect(subject.journey_history[-1][:entry_station]).to eq nil
+      expect(subject.journey_history[-1].start).to eq nil
     end
 
   end

@@ -2,52 +2,58 @@ require 'journey_log'
 
 describe JourneyLog do
 
-  let(:entry_station) { double :station }
-  let(:exit_station) { double :station }
-  let(:journey) { double :journey }
-  let(:journey_class){double :journey_class, new: journey}
+  let(:station1) {double(:station, name: 'Old Street', zone: 1)}
+  let(:station2) {double(:station, name: 'Turnham Green', zone: 2)}
+  let(:station5) {double(:station, name: 'Twickenham', zone: 5)}
 
-  describe '#initialize'
+  describe '#initialize' do
+    it 'defaults to an empty array' do
+      expect(subject.journeys.count).to eq 0
+    end
+  end
 
   describe "#start" do
-
-    it 'puts something in the journeys array' do
-      subject.start(entry_station)
+    it 'adds something to the journeys array' do
+      subject.start(station1)
       expect(subject.journeys.count).to eq 1
     end
-
-    it 'puts an actual journey in the journeys array' do
-      subject.start(entry_station)
-      expect(subject.current_journey.entry_station).to eq entry_station
+    it 'records the entry station in current_journey' do
+      subject.start(station1)
+      expect(subject.current_journey.entry_station).to eq station1
     end
-
-    it "creates separate journey entries for double touch ins" do
-      subject.start(entry_station)
-      subject.start(entry_station)
+    it 'puts a journey object into current_journey' do
+      subject.start(station1)
+      expect(subject.current_journey).to be_an_instance_of Journey
+    end
+    it "creates two journey entries for a double touch in" do
+      subject.start(station1)
+      subject.start(station1)
       expect(subject.journeys.count).to eq 2
     end
-
   end
 
   describe "#finish" do
-
-    it 'adds an exit station to the current journey' do
-      subject.start(entry_station)
-      subject.finish(exit_station)
-      expect(subject.journeys.last.exit_station).to eq exit_station
+    it 'records the exit station in the journeys array' do
+      subject.start(station2)
+      subject.finish(station5)
+      expect(subject.journeys.last.exit_station).to eq station5
     end
-
-    it "creates separate journey entries for double touch outs" do
-      subject.finish(exit_station)
-      subject.finish(exit_station)
+    it "creates two journey entries for a double touch out" do
+      subject.finish(station2)
+      subject.finish(station2)
       expect(subject.journeys.count).to eq 2
     end
-
-    it "allows a journey to be created if only touching out" do
-      subject.finish(exit_station)
+    it "create a journey even if only touching out" do
+      subject.finish(station1)
       expect(subject.journeys.count).to eq 1
     end
-
   end
 
+  describe "#journeys" do
+    it 'puts a journey object into the journeys array' do
+      subject.start(station1)
+      subject.finish(station2)
+      expect(subject.journeys).to include Journey
+    end
+  end
 end

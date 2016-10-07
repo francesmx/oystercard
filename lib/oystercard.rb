@@ -6,7 +6,7 @@ class Oystercard
   TOP_UP_LIMIT = 90
   MINIMUM_BALANCE = 1
 
-  attr_reader :balance, :list_journeys
+  attr_reader :balance
 
   def initialize
     @balance = 0
@@ -33,7 +33,7 @@ class Oystercard
   end
 
   def list_journeys
-    @list_journeys.journeys
+    @list_journeys.journeys.dup
   end
 
 private

@@ -10,8 +10,9 @@ describe Oystercard do
   let(:exit_station) { double :station }
   let(:journey) {double :journey, entry_station: :exit_station}
 
-  station1 = Station.new(:name1,1)
-  station2 = Station.new(:name2,2)
+  station1 = Station.new(:station1,1)
+  station2 = Station.new(:station2,2)
+  station5 = Station.new(:station5,5)
 
   describe "#initialize" do
     it "has an initial balance of 0" do
@@ -37,10 +38,11 @@ describe Oystercard do
   end
 
   context "when topped up" do
+    before(:each) do
+      subject.top_up(Oystercard::TOP_UP_LIMIT)
+    end
+
     describe "#touch_in" do
-      before(:each) do
-        subject.top_up(Oystercard::TOP_UP_LIMIT)
-      end
       it "should remember the entry station" do
         subject.touch_in(station)
         expect(subject.list_journeys.last.entry_station).to eq station
@@ -52,13 +54,18 @@ describe Oystercard do
     end
 
     describe "#touch_out" do
-      before(:each) do
-        subject.top_up(Oystercard::TOP_UP_LIMIT)
-      end
 
-      it "should deduct the standard fare for a completed journey" do
+      it "should deduct the standard fare for a completed journey in a single zone" do
         subject.touch_in(station1)
         expect{subject.touch_out(station1)}.to change{subject.balance}.by (-Journey::MINIMUM_FARE)
+      end
+      it "should deduct the standard fare for a completed journey across 2 zones" do
+        subject.touch_in(station1)
+        expect{subject.touch_out(station2)}.to change{subject.balance}.by (-2)
+      end
+      it "should deduct the standard fare for a completed journey across 5" do
+        subject.touch_in(station1)
+        expect{subject.touch_out(station5)}.to change{subject.balance}.by (-5)
       end
       it "should deduct a penalty fare if touching out for the first time" do
         subject.touch_out(station)

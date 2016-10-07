@@ -7,6 +7,8 @@ describe JourneyLog do
   let(:journey) { double :journey }
   let(:journey_class){double :journey_class, new: journey}
 
+  describe '#initialize'
+
   describe "#start" do
 
     it 'puts something in the journeys array' do

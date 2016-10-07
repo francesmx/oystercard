@@ -1,5 +1,7 @@
 
 require './lib/oystercard'
+require './lib/station'
+
 describe Oystercard do
 
   subject(:oystercard) {described_class.new}
@@ -7,6 +9,9 @@ describe Oystercard do
   let(:entry_station) { double :station }
   let(:exit_station) { double :station }
   let(:journey) {double :journey, entry_station: :exit_station}
+
+  station1 = Station.new(:name1,1)
+  station2 = Station.new(:name2,2)
 
   describe "#initialize" do
     it "has an initial balance of 0" do
@@ -52,17 +57,17 @@ describe Oystercard do
       end
 
       it "should deduct the standard fare for a completed journey" do
-        subject.touch_in(station)
-        expect{subject.touch_out(station)}.to change{subject.balance}.by (-Journey::MINIMUM_FARE)
+        subject.touch_in(station1)
+        expect{subject.touch_out(station1)}.to change{subject.balance}.by (-Journey::MINIMUM_FARE)
       end
       it "should deduct a penalty fare if touching out for the first time" do
         subject.touch_out(station)
         expect{subject.touch_out(station)}.to change{subject.balance}.by (-Journey::PENALTY_FARE)
       end
       it "should deduct a penalty fare if touching out twice" do
-        subject.touch_in(station)
-        subject.touch_out(station)
-        expect{subject.touch_out(station)}.to change{subject.balance}.by (-Journey::PENALTY_FARE)
+        subject.touch_in(station1)
+        subject.touch_out(station1)
+        expect{subject.touch_out(station1)}.to change{subject.balance}.by (-Journey::PENALTY_FARE)
       end
     end
   end
@@ -73,15 +78,15 @@ describe Oystercard do
 
     before do
       subject.top_up(Oystercard::TOP_UP_LIMIT)
-      subject.touch_in("Margate")
-      subject.touch_out("Exeter")
+      subject.touch_in(station1)
+      subject.touch_out(station2)
     end
 
     it "list_journeys stores the entry station" do
-      expect(subject.list_journeys.last.entry_station).to eq "Margate"
+      expect(subject.list_journeys.last.entry_station).to eq station1
     end
     it "list_journeys stores the exit station" do
-      expect(subject.list_journeys.last.exit_station).to eq "Exeter"
+      expect(subject.list_journeys.last.exit_station).to eq station2
     end
   end
 

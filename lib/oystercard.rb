@@ -39,7 +39,7 @@ class Oystercard
 private
 
   def check_balance
-    fail "Card empty - £#{MINIMUM_BALANCE} required" if empty?
+    fail "Card empty - £#{MINIMUM_BALANCE} required" if @balance < MINIMUM_BALANCE
   end
 
   def deduct

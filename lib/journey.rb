@@ -17,7 +17,10 @@ class Journey
   end
 
   def charge
-    complete? ? MINIMUM_FARE : PENALTY_FARE
+    complete? ? calculate_fare : PENALTY_FARE
   end
 
+  def calculate_fare
+    (@entry_station.zone - @exit_station.zone).abs + MINIMUM_FARE
+  end
 end

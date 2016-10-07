@@ -3,7 +3,7 @@ require 'station'
 describe Station do
 
   describe "#initialize" do
-    let(:subject) {described_class.new(name: :knightsbridge, zone: 3)}
+    let(:subject) {described_class.new(:knightsbridge, 3)}
 
     it "should have a name" do
       expect(subject.name).to eq :knightsbridge
@@ -15,3 +15,4 @@ describe Station do
   end
 
 end
+ 
